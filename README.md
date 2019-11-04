@@ -1,4 +1,4 @@
-### node
+### node简单介绍
 
 + I/O
     - 阻塞I/O : 同步 => 逐条执行
@@ -22,8 +22,6 @@
     - 单线程是针对主进程来说的，IO操作交给底层系统多进程运行
     - 并不是单进程，可以使用相关模块调用多进程（每个核心启动一个），完成集群
 
-### 环境
-
 #### CommonJS 规范
 > 规则
 + 每人文件都是一个模块，都存在自己的作用域
@@ -42,7 +40,10 @@
             module.exports = {
                 a: 1
             }
+      
         ```
+### node基本介绍以及使用
+
 + require => 引用其他模块
     - module 被加载的时候执行，加载后缓存
     - 一但出现模块被循环加载的，就只输出已经执行的部分，还未执行的部分不会输出
@@ -89,41 +90,45 @@
     - timer => 一系列定时操作
     - 具体
         * 声明对象分为局部以及全局，使用global.XXX 声明的对象为全局对象，其直接挂载在全局global下
-        * process 常用参数 
-            ```
-            argv => 进程启动时的参数集 是一个数组
-            1. 首参 启动node程序的路径
-            2. 第二个参数 启动脚本文件的路径
-            3. 如果进行文件名后传参 即对启动的文件做配置 node xxx.js a=1 b=2 则会有相应的参数存储进入argv数组
-            argv0 => argv 的第一个参数 
-            execArgv =>  node --inspect xxx.js 写在文件名前面的参数，即对node做启动配置参数
-            execPath => node 调用脚本的路径，即node的启动路径
-            ```
-        * process 环境
-            ```
-                const {env} = process
-
-                console.log(env) // 保存了启动环境的配置
-            ```
-        * process cwd => 注意这个是process的直属方法
-            ```
-            console.log(process.cwd()) // 当前进程的路径
-            ```
-        * process timer
-            ```
-                // 最后执行 全局global 直属的   => 下个队列队首
-                setImmediate(() => {
-                    console.log('setImmediate')
-                })
-
-                // 在这两个之间执行
-                setTimeout(() => {
-                    console.log('setTimeout')
-                }, 0)
-
-                // 最先执行 在当前队列最后，所以先执行
-                process.nextTick(() => {
-                    console.log('nextTick')
-                })
-            ```
 + process  global 挂下的进程
+    - process 常用参数 
+        ```
+        argv => 进程启动时的参数集 是一个数组
+        1. 首参 启动node程序的路径
+        2. 第二个参数 启动脚本文件的路径
+        3. 如果进行文件名后传参 即对启动的文件做配置 node xxx.js a=1 b=2 则会有相应的参数存储进入argv数组
+        argv0 => argv 的第一个参数 
+        execArgv =>  node --inspect xxx.js 写在文件名前面的参数，即对node做启动配置参数
+        execPath => node 调用脚本的路径，即node的启动路径
+        ```
+    - process 环境
+        ```
+            const {env} = process
+            console.log(env) // 保存了启动环境的配置
+        ```
+    - process cwd => 注意这个是process的直属方法
+        ```
+        console.log(process.cwd()) // 当前进程的路径
+        ```
+    - process timer
+        ```
+            // 最后执行 全局global 直属的   => 下个队列队首
+            setImmediate(() => {
+                console.log('setImmediate')
+            })
+            // 在这两个之间执行
+            setTimeout(() => {
+                console.log('setTimeout')
+            }, 0)
+            // 最先执行 在当前队列最后，所以先执行
+            process.nextTick(() => {
+                console.log('nextTick')
+            })
+        ```
+#### 关于node 调试
+
++ chrome://insprct 路径  => 需要科学上网
++ 使用IDE调试
+    - vs Code
+        * 编辑launch.json
+        * 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
