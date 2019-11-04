@@ -8,7 +8,7 @@
 + 事件驱动
 
 + node.js 的优点
-    - 对于前段，有利于统一体验
+    - 对于前端，有利于统一体验
     - 高并发，IO密集 性能优越
         * CPU密集： 加密解密，压缩解压，等 => 运算操作密集
         * I/O密集：文件操作，网络操作，数据库操作等  => 读写密集
@@ -36,7 +36,7 @@
             const exports = module.exports
             // 其指向不能被改变
             exports = {
-                a:1 // undefine 报错，因为改变了指向
+                a:1 // undefined 报错，因为改变了指向
             }
             // 就要自定义输出内容, 使用全写
             module.exports = {
@@ -82,5 +82,11 @@
     ```
      const chalk = require('chalk')
     ```
-+ global 顶级对象  类比于js 中的window
++ global 顶级对象
+    - 类比于js 中的window
+    - CommonJS
+    - Buffer process console  => 其下挂载方法
+    - timer => 一系列定时操作
+    - 具体
+        * 声明对象分为局部以及全局，使用global.XXX 声明的对象为全局对象，其直接挂载在全局global下
 + process  global 挂下的进程
