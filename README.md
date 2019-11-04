@@ -29,6 +29,20 @@
 + 每人文件都是一个模块，都存在自己的作用域
 + 在模块内部module变量 => 代表模块本身
 + module.exports属性 => 代表模块对外提供的接口
+    - exports 和module.exports的区别
+        * exports 是module.exports 的简写
+        ```
+            //相当于
+            const exports = module.exports
+            // 其指向不能被改变
+            exports = {
+                a:1 // undefine 报错，因为改变了指向
+            }
+            // 就要自定义输出内容, 使用全写
+            module.exports = {
+                a: 1
+            }
+        ```
 + require => 引用其他模块
     - module 被加载的时候执行，加载后缓存
     - 一但出现模块被循环加载的，就只输出已经执行的部分，还未执行的部分不会输出
@@ -43,5 +57,30 @@
         * 例如 /xxx/index
     - 不写路径则认为是build-in模块或者各级的node_modules内的第三方模块
         * 例如 'vue'
+    - 引用内置模块的方式
+
+    ```
+    // fs 模块是用来读取二进制流
+
+    const fs = require('fs')
+
+    const result = fs.readFile('./07_fs.js', (err, data) => {
+        if(err) {
+            console.log(err)
+        } else {
+            console.log(data)
+            // 讲16进制转义为string
+            console.log(data.toString())
+        }
+    })
+
+    // 读取文件为异步操作，直接打印 undefined
+    console.log(result)
+
+    ```
+    - 引用外部模块
+    ```
+     const chalk = require('chalk')
+    ```
 + global 顶级对象  类比于js 中的window
 + process  global 挂下的进程
