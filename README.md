@@ -116,7 +116,7 @@
             setImmediate(() => {
                 console.log('setImmediate')
             })
-            // 在这两个之间执行
+            // 在这两个之间执行 也是global直属的
             setTimeout(() => {
                 console.log('setTimeout')
             }, 0)
@@ -132,3 +132,30 @@
     - vs Code
         * 编辑launch.json
         * 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+
+
+### node 常用API
+
++ 内置模块path
+    - 模块提供用于处理文件路径和目录路径的实用工具
+    - path 模块的默认操作因 Node.js 应用程序运行所在的操作系统而异。 具体来说，当在 Windows 操作系统上运行时， path 模块将假定正在使用 Windows 风格的路径。因此，使用 path.basename() 可能会在 POSIX 和 Windows 上产生不同的结果
+        * path.normalize() 方法规范化给定的 path，解析 '..' 和 '.' 片段
+        * path.join() 方法使用平台特定的分隔符作为定界符将所有给定的 path 片段连接在一起，然后规范化生成的路径。（处理了上下级关系等）
+        * path.resolve() 方法将路径或路径片段的序列解析为绝对路径。
+        * path.basename() 方法返回 path 的最后一部分，类似于 Unix 的 basename 命令。 尾部的目录分隔符将被忽略
+        * path.dirname() 方法返回 path 的目录名，类似于 Unix 的 dirname 命令。 尾部的目录分隔符将被忽略
+        * path.extname() 方法返回 path 的扩展名，从最后一次出现 .（句点）字符到 path 最后一部分的字符串结束
+        * path.parse() 方法返回一个对象，其属性表示 path 的重要元素。 尾部的目录分隔符将被忽略
+        * path.format() 与 path.parse() 行为相反
+        * 提供平台特定的路径片段分隔符：
+        ```
+            Windows 上是 \。
+            POSIX 上是 /。
+        ```
+        * 提供平台特定的路径定界符：
+        ```
+            ; 用于 Windows
+            : 用于 POSIX
+        ```
+        * path.win32 属性提供对特定于 Windows 的 path 方法的实现的访问
+        * path.posix 属性提供对 path 方法的 POSIX 特定实现的访问。
