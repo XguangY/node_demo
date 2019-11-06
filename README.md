@@ -159,3 +159,86 @@
         ```
         * path.win32 属性提供对特定于 Windows 的 path 方法的实现的访问
         * path.posix 属性提供对 path 方法的 POSIX 特定实现的访问。
+    - 特殊注意
+        * 关于path: _dirname _filename 总是返回文件的绝对路径
+        * 关于path: process.cwd() 总是返回node命令执行的路径（调用node的路径)
+        * require 方法的路径总是相对于当前文件
++ Buffer => 缓冲器
+    - Buffer 类是作为 Node.js API 的一部分引入的，用于在 TCP 流、文件系统操作、以及其他上下文中与八位字节流进行交互
+    - Buffer 是用来处理二进制数据流的
+    - Buffer 实例类似于整数数组，但是其长度大小固定
+    - Buffer c++ 在V8堆外分配的物理内存
+    - Buffer 是一个全局变量，直接挂载在global下
+    - 一些Buffer 的静态属性和方法:
+    - Buffer.alloc()
+        * Buffer.alloc(10) 第一个参数为长度，不填内容（第二个参数），即用 0 填充 <Buffer 00 00 00 00 00 00 00 00 00 00>
+        * Buffer.alloc(10, 1) 第二参数为填充内容 <Buffer 01 01 01 01 01 01 01 01 01 01>
+    - Buffer.allocUnsafe(10)
+        * 创建一个长度为 10、且未初始化的 Buffer。 <Buffer 98 fe a5 8d fa 01 00 00 58 ff> 未经初始化的混乱Buffer
+        * 这个方法比调用 Buffer.alloc() 更快，
+        * 但返回的 Buffer 实例可能包含旧数据，
+        * 因此需要使用 fill() 或 write() 重写。
+        * 不常用
+    - Buffer.from()
+        * Buffer.from([1,2,3]) 创建一个包含 [0x1, 0x2, 0x3] 的 Buffer。  <Buffer 01 02 03>
+        * Buffer.from('test', 'latin1')  创建一个包含 Latin-1 字节 [0x74, 0xe9, 0x73, 0x74] 的 Buffer <Buffer 74 65 73 74>
+    - Buffer.byteLength()
+        * 返回字符串的实际字节长度。 与 String.prototype.length 不同，后者返回字符串的字符数
+        * Buffer.byteLength('test') // 4 英文字母占位一个字节
+        * Buffer.byteLength('测试') // 6 中文占位三个字节
+    - Buffer.isBuffer(obj)
+        * obj 是一个 Buffer，则返回 true，否则返回 false。
+        * Buffer.isBuffer({}) false
+        * Buffer.isBuffer(Buffer.from([1,2,3])) true
+    - Buffer.concat()
+    ```
+        // 用含有三个 `Buffer` 实例的数组创建一个单一的 `Buffer`。
+
+        const buf1 = Buffer.alloc(10);
+        const buf2 = Buffer.alloc(14);
+        const buf3 = Buffer.alloc(18);
+        const totalLength = buf1.length + buf2.length + buf3.length;
+
+        console.log(totalLength);
+        // 打印: 42
+        // 如果已知长度，则明确提供长度会更快
+        const bufA = Buffer.concat([buf1, buf2, buf3], totalLength);
+
+        console.log(bufA);
+        // 打印: <Buffer 00 00 00 00 ...>
+        console.log(bufA.length);
+        // 打印: 42
+    ```
+    - buf.length
+        * 返回内存中分配给 buf 的字节数。 不一定反映 buf 中可用数据的字节量。
+    - buf.toString([encoding[, start[, end]]])
+        * encoding <string> 使用的字符编码。默认值: 'utf8'。
+        * start <integer> 开始解码的字节偏移量。默认值: 0。
+        * end <integer> 结束解码的字节偏移量（不包含）。默认值: buf.length。
+        * 返回: <string>
+        * 根据 encoding 指定的字符编码将 buf 解码成字符串。 传入 start 和 end 可以只解码 buf 的子集。
+    - buf.fill()
+        * buf.fill(value[, offset[, end]][, encoding])
+        * value <string> | <Buffer> | <Uint8Array> | <integer> 用来填充 buf 的值。
+        * offset <integer> 开始填充 buf 的偏移量。默认值: 0。
+        * end <integer> 结束填充 buf 的偏移量（不包含）。默认值: buf.length。
+        * encoding <string> 如果 value 是字符串，则指定 value 的字符编码。默认值: 'utf8'。
+        * 返回: <Buffer> buf 的引用。
+        ```
+            const buf1 = Buffer.alloc(10)
+            console.log(buf1.fill('e',2,5)) //<Buffer 00 00 65 65 65 00 00 00 00 00>
+        ```
+    - buf.equals(otherBuffer)
+        * otherBuffer <Buffer> 要与 bur 对比的 Buffer 或 Uint8Array。
+        * 返回: <boolean>
+        ```
+            const buf1 = Buffer.from('ABC');
+            const buf2 = Buffer.from('414243', 'hex');
+            const buf3 = Buffer.from('ABCD');
+
+            console.log(buf1.equals(buf2));
+            // 打印: true
+            console.log(buf1.equals(buf3));
+            // 打印: false
+        ```
+    - buf.indexOf() 类似于数组的 Array.indexOf()
