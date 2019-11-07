@@ -242,3 +242,73 @@
             // 打印: false
         ```
     - buf.indexOf() 类似于数组的 Array.indexOf()
+        * 汉字占三个字符， ==> 解决可能出现的中文乱码问题
+    - buf.copy(target[, targetStart[, sourceStart[, sourceEnd]]])
+        * target <Buffer> | <Uint8Array> 要拷贝进的 Buffer 或 Uint8Array。
+        * targetStart <integer> target 中开始写入之前要跳过的字节数。默认值: 0。
+        * sourceStart <integer> buf 中开始拷贝的偏移量。默认值: 0。
+        * sourceEnd <integer> buf 中结束拷贝的偏移量（不包含）。默认值: buf.length。
+        * 返回: <integer> 拷贝的字节数。
+        ```
+            // 创建两个 `Buffer` 实例。
+            const buf1 = Buffer.allocUnsafe(26);
+            const buf2 = Buffer.allocUnsafe(26).fill('!');
+
+            for (let i = 0; i < 26; i++) {
+            // 97 是 'a' 的十进制 ASCII 值。
+            buf1[i] = i + 97;
+            }
+
+            // 拷贝 `buf1` 中第 16 至 19 字节偏移量的数据到 `buf2` 第 8 字节偏移量开始。
+            buf1.copy(buf2, 8, 16, 20);
+
+            console.log(buf2.toString('ascii', 0, 25));
+            // 打印: !!!!!!!!qrst!!!!!!!!!!!!!
+        ```
+        ```
+            // 创建一个 `Buffer`，并拷贝同一 `Buffer` 中一个区域的数据到另一个重叠的区域。
+
+            const buf = Buffer.allocUnsafe(26);
+
+            for (let i = 0; i < 26; i++) {
+            // 97 是 'a' 的十进制 ASCII 值。
+            buf[i] = i + 97;
+            }
+
+            buf.copy(buf, 0, 4, 10);
+
+            console.log(buf.toString());
+            // 打印: efghijghijklmnopqrstuvwxyz
+        ```
+    - string_decoder
+        * string_decoder 模块提供了一个 API，用于以保留编码的多字节 UTF-8 和 UTF-16 字符的方式将 Buffer 对象解码为字符串
+        ```
+            // 如何去除buffer中文乱码
+            const buf = Buffer.from('中文乱码在此！')
+            // string_decoder 是buffer的内置模块
+            // 将 Buffer 实例写入 StringDecoder 实例时，将使用内部缓冲区来确保已解码的字符串不包含任何不完整的多字节字符。
+            // 它们保存在缓冲区中，直到下一次调用 stringDecoder.write() 或调用 stringDecoder.end() 为止
+            // 简单说就是会自动识别多字节字符，代码操作出现不完整的情况下不做输出，而是存储在内存中，在下一次操作中拼接在起始位置
+            const { StringDecoder } = require('string_decoder')
+            const decoder = new StringDecoder('utf8')
+            for(let  i = 0; i< buf.length; i+=5) {
+                // 生成未初始化的Buffer
+                const b = Buffer.allocUnsafe(5)
+                // 拷贝
+                buf.copy(b, 0, i)
+                console.log(b.toString())
+                // 结果
+                // 中�
+                // �乱�
+                // ��在
+                // 此�
+                // ��4�║
+            }
+            for(let  i = 0; i< buf.length; i+=5) {
+                // 生成未初始化的Buffer
+                const b = Buffer.allocUnsafe(5)
+                // 拷贝
+                buf.copy(b, 0, i)
+                console.log(decoder.write(b))
+            }
+        ```
