@@ -34,7 +34,7 @@ const ret = parse(url)
 
 // 
 const {sep, delimiter, win32, posix} = require('path')
-// console.log('sep:', sep)
-// console.log('delimiter:', delimiter)
-// console.log('posix sep:', posix.sep)
-// console.log('posix delimiter:', posix.delimiter)
+console.log('sep:', sep)
+console.log('delimiter:', delimiter)
+console.log('posix sep:', posix.sep)
+console.log('posix delimiter:', posix.delimiter)
