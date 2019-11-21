@@ -312,3 +312,103 @@
                 console.log(decoder.write(b))
             }
         ```
+
++ events 事件触发器
+    - events 属于内置模块
+    - 所有能触发事件的对象都是 EventEmitter 类的实例。 
+    - 事件的命名通常是驼峰式的字符串，但也可以使用任何有效的 JavaScript 属性键。
+    - EventEmitter 对象触发一个事件时，所有绑定在该事件上的函数都会被同步地调用。 被调用的监听器返回的任何值都将会被忽略并丢弃。
+    ```
+        //  eventEmitter.on() 用于注册监听器， eventEmitter.emit() 用于触发事件
+        const EventEmitter = require('events')
+
+        // EventEmitter 继承类 events
+        class myEvent extends EventEmitter{}
+
+        // 实例化 myEvent
+        const myEventClick = new myEvent()
+
+        // 监听myClick
+        myEventClick.on('myClick',()=> {
+            console.log('Click')
+        })
+
+        setInterval(() => {
+            // 触发myClick
+            myEventClick.emit('myClick')
+        }, 1000)
+    ```
+    - 事件传参处理
+        * 需要注意emit首参为触发的函数名称，后续参数均为自定义参数
+        * 另外需注意传参顺序，实参与形参不再敖述
+    ```
+    // 引入内置模块 events
+    const EventEmitter = require('events')
+    
+    // EventEmitter 继承 events
+    class myEvent extends EventEmitter{}
+    
+    // 实例化 myEvent
+    const ce = new myEvent()
+    
+    // 监听错误 传入参数
+    ce.on('error', (err, time) => {
+        console.log(err)
+        console.log(time)
+    })
+    // 触发错误
+    ce.emit('error', new Error('error111'), Date.now())
+    // emit首参为触发的函数名称，后续参数均为自定义参数，
+    /**
+     * Error: error111
+        at Object.<anonymous> (E:\***\***\$$$\api\04_events_param.js:15:18)
+        ...
+        at bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)
+        1574242863420
+     * 
+     */
+    ```
+
+- 移除事件监听
+```
+const EventEmitter = require('events')
+class myEvent extends EventEmitter{}
+const ce = new myEvent()
+
+// 事件1
+function fn1() {
+    console.log('fn1')
+}
+// 事件2
+function fn2() {
+    console.log('fn2')
+}
+// 需注意监听同一个事件，可同时触发多个函数
+ce.on('click', fn1)
+ce.on('click', fn2)
+
+setInterval(() => {
+    // 触发myClick
+    ce.emit('click')
+}, 500)
+
+setInterval(() => {
+    // 触发myClick
+    ce.removeListener('click', fn2)
+    // 全部移除 只需要传入监听的事件名
+    // ce.removeAllListeners('click')
+
+}, 1500)
+// 打印 可以再一定时段后不再打印fn2，说明已经被移除监听
+/**
+ * fn1
+ * fn2
+ * fn1
+ * fn2
+ * fn1
+ * fn1
+ * fn1
+ * fn1
+ */
+```
+    

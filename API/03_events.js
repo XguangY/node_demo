@@ -14,10 +14,12 @@ class myEvent extends EventEmitter{}
 
 const myEventClick = new myEvent()
 
+// 监听myClick
 myEventClick.on('myClick',()=> {
     console.log('Click')
 })
 
 setInterval(() => {
+    // 触发myClick
     myEventClick.emit('myClick')
 }, 1000)
