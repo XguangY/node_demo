@@ -163,6 +163,7 @@
         * 关于path: _dirname _filename 总是返回文件的绝对路径
         * 关于path: process.cwd() 总是返回node命令执行的路径（调用node的路径)
         * require 方法的路径总是相对于当前文件
+
 + Buffer => 缓冲器
     - Buffer 类是作为 Node.js API 的一部分引入的，用于在 TCP 流、文件系统操作、以及其他上下文中与八位字节流进行交互
     - Buffer 是用来处理二进制数据流的
@@ -369,46 +370,168 @@
      */
     ```
 
-- 移除事件监听
-```
-const EventEmitter = require('events')
-class myEvent extends EventEmitter{}
-const ce = new myEvent()
+    - 移除事件监听
+    ```
+    const EventEmitter = require('events')
+    class myEvent extends EventEmitter{}
+    const ce = new myEvent()
 
-// 事件1
-function fn1() {
-    console.log('fn1')
-}
-// 事件2
-function fn2() {
-    console.log('fn2')
-}
-// 需注意监听同一个事件，可同时触发多个函数
-ce.on('click', fn1)
-ce.on('click', fn2)
+    // 事件1
+    function fn1() {
+        console.log('fn1')
+    }
+    // 事件2
+    function fn2() {
+        console.log('fn2')
+    }
+    // 需注意监听同一个事件，可同时触发多个函数
+    ce.on('click', fn1)
+    ce.on('click', fn2)
 
-setInterval(() => {
-    // 触发myClick
-    ce.emit('click')
-}, 500)
+    setInterval(() => {
+        // 触发myClick
+        ce.emit('click')
+    }, 500)
 
-setInterval(() => {
-    // 触发myClick
-    ce.removeListener('click', fn2)
-    // 全部移除 只需要传入监听的事件名
-    // ce.removeAllListeners('click')
+    setInterval(() => {
+        // 触发myClick
+        ce.removeListener('click', fn2)
+        // 全部移除 只需要传入监听的事件名
+        // ce.removeAllListeners('click')
 
-}, 1500)
-// 打印 可以再一定时段后不再打印fn2，说明已经被移除监听
-/**
- * fn1
- * fn2
- * fn1
- * fn2
- * fn1
- * fn1
- * fn1
- * fn1
- */
-```
-    
+    }, 1500)
+    // 打印 可以再一定时段后不再打印fn2，说明已经被移除监听
+    /**
+    * fn1
+    * fn2
+    * fn1
+    * fn2
+    * fn1
+    * fn1
+    * fn1
+    * fn1
+    */
+    ```
+
++ fs 文件系统
+    - fs模块是node.js的内置模块
+    - fs 模块提供了一个 API，用于以模仿标准 POSIX 函数的方式与文件系统进行交互
+    - 所有文件系统操作都具有同步和异步的形式。
+        * 举个例子
+        ```
+        // 异步
+        const fs = require('fs')
+        // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+        fs.readFile('./08_fs_throw_string.js', 'utf8', (err, data) => {
+            //  如果出现错误 通过throw输出
+            if (err) throw err
+            console.log(111111111)
+        })
+
+        //  同步
+        const data = fs.readFileSync('./09_fs_sync.js', 'utf8')
+
+        console.log(data)
+
+        // 打印可以看到同步的方法即使写在后面也会先执行，因为异步的方法是交给i/o去执行的
+        /**
+        * // 异步
+            const fs = require('fs')
+            // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+            fs.readFile('./08_fs_throw_string.js', 'utf8', (err, data) => {
+                //  如果出现错误 通过throw输出
+                if (err) throw err
+                console.log(111111111)
+            })
+
+            //  同步
+            const data = fs.readFileSync('./09_fs_sync.js', 'utf8')
+
+            console.log(data)
+            111111111
+        * 
+        */
+        ```
+    - 读文件
+        ```
+        // 先来一个简单的例子，读文件
+
+        const fs = require('fs')
+        // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+        fs.readFile('./06_fs.js', (err, data) => {
+            //  如果出现错误 通过throw输出
+            if (err) throw err
+            console.log(data) 
+        })
+        // 打印 二进制 一个buf
+        /**
+        * PS E:\xxx\ccc\aaa\api> node 06_fs.js
+            <Buffer 2f 2f 20 e6 89 80 e6 9c 89 e6 96 87 e4 bb b6 e7 b3 bb e7 bb 9f e6 93 8d e4 bd 9c e9 83 bd e5 85 b7 e6 9c 89 e5 90 8c e6 ad a5 e5 92 8c e5 bc 82 e6 ad ... >
+        */
+        ```
+    - 写文件
+        ```
+        //  写一个文件
+
+        const fs = require('fs')
+
+        fs.writeFile('./test.js', 'test test', {
+            encoding: 'utf8'
+        }, (err) => {
+            if (err) throw err
+            console.log('done!')
+        })
+
+        //  打印 
+        // 在本文件价下增加一个test.js文件 内容为 test test
+        // done! 
+        ```
+    - 输出为字符串 的两种方式
+        * toString()
+            ```
+            // 异步操作
+            const fs = require('fs')
+            // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+            fs.readFile('./07_fs_throw_string.js', (err, data) => {
+                //  如果出现错误 通过throw输出
+                if (err) throw err
+                console.log(data)
+                // 输出字符串
+                console.log(data.toString()) 
+            })
+
+            /**
+            * 
+            *  PS E:\xxx\xxx\xxx\api> node 07_fs_throw_string.js
+                <Buffer 2f 2f 20 20 e8 be 93 e5 87 ba 20 e5 ad 97 e7 ac a6 e4 b8 b2 0d 0a 63 6f 6e 73 74 20 66 73 20 3d 20 72 65 71 75 69 72 65 28 27 66 73 27 29 0d 0a 2f 2f ... >
+                //  输出 字符串
+                const fs = require('fs')
+                // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+                fs.readFile('./07_fs_throw_string.js', (err, data) => {
+                    //  如果出现错误 通过throw输出
+                    if (err) throw err
+                    console.log(data)
+                    // 输出字符串
+                    console.log(data.toString())
+                })
+            */
+            ```
+        * 异步传参
+            ```
+            const fs = require('fs')
+            // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+            fs.readFile('./08_fs_throw_string.js', 'utf8', (err, data) => {
+                //  如果出现错误 通过throw输出
+                if (err) throw err
+                console.log(data)
+            })
+
+            // 输出
+            // const fs = require('fs')
+            // // 需要注意一点 如果操作成功完成，则第一个参数将为 null 或 undefined。
+            // fs.readFile('./08_fs_throw_string.js', 'utf8', (err, data) => {
+            //     //  如果出现错误 通过throw输出
+            //     if (err) throw err
+            //     console.log(data)
+            // })
+            ```
