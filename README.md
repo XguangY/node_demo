@@ -11,3 +11,5 @@
 + [P05：node.js 内置模块 之 events](https://juejin.im/post/5dd4fdd5e51d4536d10591a2)
 
 + [P06：node.js 内置模块 fs(1)](https://juejin.im/post/5dd795db51882573160f4657)
+
++ [P07：node.js 内置模块 fs(2)](https://juejin.im/post/5ddba41d6fb9a07a84118598)
